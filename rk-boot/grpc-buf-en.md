@@ -1,32 +1,30 @@
-# GRPC: 使用 Buf 快速编译 GRPC proto 文件
+# GRPC: How to compile proto files with buf quickly and safely.
 
-## 介绍
-使用过 GRPC 的用户都应该知道，protocol buffer 文件需要使用相关的命令行，把 *.proto 文件编译成 *.go 文件。
+## Introduction
+In order to compile *.proto files to *.go files, we need couple of command line tools.
 
-根据不同需要，会使用到不同的命令行文件。以 Go 语言为例，我们需要大致如下几个命令行文件。
+For example, in golang, we need at least 4 different command line tools for gRpc microservice.
 
-| 工具 | 介绍 | 安装 |
+| Tool | Description | Installation |
 | ---- | ---- | ---- |
-| [protobuf](https://github.com/protocolbuffers/protobuf) | protocol buffer 编译所需的命令行 | [Install](http://google.github.io/proto-lens/installing-protoc.html) |
-| [protoc-gen-go](https://github.com/golang/protobuf/tree/master/protoc-gen-go) | 从 proto 文件，生成 .go 文件 | [Install](https://grpc.io/docs/languages/go/quickstart/) |
-| [protoc-gen-go-grpc](https://github.com/grpc/grpc-go) | 从 proto 文件，生成 GRPC 相关的 .go 文件 | [Install](https://grpc.io/docs/languages/go/quickstart/) |
-| [protoc-gen-grpc-gateway](https://github.com/grpc-ecosystem/grpc-gateway) | 从 proto 文件，生成 grpc-gateway 相关的 .go 文件 | [Install](https://github.com/grpc-ecosystem/grpc-gateway#installation) |
-| [protoc-gen-openapiv2](https://github.com/grpc-ecosystem/grpc-gateway) | 从 proto 文件，生成 swagger 界面所需的参数文件 | [Install](https://github.com/grpc-ecosystem/grpc-gateway#installation) |
+| [protobuf](https://github.com/protocolbuffers/protobuf) | protocol buffer | [Install](http://google.github.io/proto-lens/installing-protoc.html) |
+| [protoc-gen-go](https://github.com/golang/protobuf/tree/master/protoc-gen-go) | Plugin for the Google protocol buffer compiler to generate Go code.. | [Install](https://grpc.io/docs/languages/go/quickstart/) |
+| [protoc-gen-go-grpc](https://github.com/grpc/grpc-go) | This project aims to provide that HTTP+JSON interface to your gRPC service. | [Install](https://grpc.io/docs/languages/go/quickstart/) |
+| [protoc-gen-grpc-gateway](https://github.com/grpc-ecosystem/grpc-gateway) | plugin for Google protocol buffer compiler to generate a reverse-proxy, which converts incoming RESTful HTTP/1 requests gRPC invocation. | [Install](https://github.com/grpc-ecosystem/grpc-gateway#installation) |
+| [protoc-gen-openapiv2](https://github.com/grpc-ecosystem/grpc-gateway) | plugin for Google protocol buffer compiler to generate open API config file. | [Install](https://github.com/grpc-ecosystem/grpc-gateway#installation) |
 
-除了安装上述命令行，我们还需要根据需要，运行至少4种不同命令来编译 *.proto 文件，非常晦涩难懂。
+## Use [Buf](https://docs.buf.build)
+[Buf](https://docs.buf.build) is also a command line tools integrate above tools into a single command. It is much easier and safer to use while compiling complex protocol buffer files.
 
-## 使用 [Buf](https://docs.buf.build) 快速编译
-我们可以通过 [Buf](https://docs.buf.build) 快速配置编译流程。虽然前期需要一定的配置，但是比起写复杂的脚本，要简单安全的多。
+Let's take an example.
 
-下面我们就通过一个例子来浏览一下。
+## Example
+We will use a simple greeter service as example to demonstrate how to build a go-grpc microservice with help of [Buf](https://docs.buf.build).
+- [Example](https://github.com/rookie-ninja/rk-demo/tree/master/grpc/getting-started)
+- [Docs](https://rkdev.info/docs/bootstrapper/getting-started/grpc-golang/)
 
-## 例子
-我们以简单的 Hello World 为例子，一步一步生成基于 GRPC 的微服务。
-- [例子](https://github.com/rookie-ninja/rk-demo/tree/master/grpc/getting-started)
-- [文档](https://rkdev.info/cn/docs/bootstrapper/getting-started/grpc-golang/)
-
-### 第一步：安装命令行
-> 建议通过 [rk](https://github.com/rookie-ninja/rk) 命令行，快速安装所需要的工具。
+### Step-1: Install command line tools
+> We recommend use [rk](https://github.com/rookie-ninja/rk) install them easily.
 ```shell script
 # Install RK CLI
 $ go get -u github.com/rookie-ninja/rk/cmd/rk
@@ -51,8 +49,8 @@ COMMANDS:
     rk-std                   install rk standard environment on local machine
     help, h                  Shows a list of commands or help for one command
 
-# Install protobuf, buf, protoc-gen-go, protoc-gen-go-grpc, protoc-gen-grpc-gateway, protoc-gen-openapiv2
-$ rk install protobuf
+# Install buf, protoc-gen-go, protoc-gen-go-grpc, protoc-gen-grpc-gateway, protoc-gen-openapiv2
+# rk install protobuf
 $ rk install protoc-gen-go
 $ rk install protoc-gen-go-grpc
 $ rk install protoc-gen-go-grpc-gateway
@@ -60,17 +58,18 @@ $ rk install protoc-gen-openapiv2
 $ rk install buf
 ```
 
-> 也可以自行在官网安装
+> Or install them from official sites.
 
-| 工具 | 安装 |
-| ---- | ---- |
-| [protobuf](https://github.com/protocolbuffers/protobuf) | [Install](http://google.github.io/proto-lens/installing-protoc.html) |
-| [protoc-gen-go](https://github.com/golang/protobuf/tree/master/protoc-gen-go) | [Install](https://grpc.io/docs/languages/go/quickstart/) |
-| [protoc-gen-go-grpc](https://github.com/grpc/grpc-go) | [Install](https://grpc.io/docs/languages/go/quickstart/) |
-| [protoc-gen-grpc-gateway](https://github.com/grpc-ecosystem/grpc-gateway) | [Install](https://github.com/grpc-ecosystem/grpc-gateway#installation) |
-| [protoc-gen-openapiv2](https://github.com/grpc-ecosystem/grpc-gateway) | [Install](https://github.com/grpc-ecosystem/grpc-gateway#installation) |
+| Tool | Description | Installation |
+| ---- | ---- | ---- |
+| [protobuf](https://github.com/protocolbuffers/protobuf) | protocol buffer | [Install](http://google.github.io/proto-lens/installing-protoc.html) |
+| [buf](https://docs.buf.build) | Help you create consistent Protobuf APIs that preserve compatibility and comply with design best-practices. | [Install](https://docs.buf.build/installation) |
+| [protoc-gen-go](https://github.com/golang/protobuf/tree/master/protoc-gen-go) | Plugin for the Google protocol buffer compiler to generate Go code.. | [Install](https://grpc.io/docs/languages/go/quickstart/) |
+| [protoc-gen-go-grpc](https://github.com/grpc/grpc-go) | This project aims to provide that HTTP+JSON interface to your gRPC service. | [Install](https://grpc.io/docs/languages/go/quickstart/) |
+| [protoc-gen-grpc-gateway](https://github.com/grpc-ecosystem/grpc-gateway) | plugin for Google protocol buffer compiler to generate a reverse-proxy, which converts incoming RESTful HTTP/1 requests gRPC invocation. | [Install](https://github.com/grpc-ecosystem/grpc-gateway#installation) |
+| [protoc-gen-openapiv2](https://github.com/grpc-ecosystem/grpc-gateway) | plugin for Google protocol buffer compiler to generate open API config file. | [Install](https://github.com/grpc-ecosystem/grpc-gateway#installation) |
 
-### 第二步：创建 api/v1/greeter.proto
+### Step-2: Create api/v1/greeter.proto
 ```protobuf
 syntax = "proto3";
 
@@ -91,10 +90,10 @@ message GreeterResponse {
 }
 ```
 
-### 第三步：创建 api/v1/gw_mapping.yaml
-我们通过 gw_mapping.yaml 文件来映射 GRPC -> Restful API。这样我们可以避免在 *.proto 文件里写一堆 option 代码。
+### Step-3: Create api/v1/gw_mapping.yaml
+In this example, we move **options** from *.proto files which is really hard to understand.
 
-具体语法，可以参考：https://github.com/googleapis/googleapis/blob/master/google/api/http.proto
+Please refer https://github.com/googleapis/googleapis/blob/master/google/api/http.proto for syntax.
 
 ```yaml
 type: google.api.Service
@@ -107,8 +106,8 @@ http:
       get: /api/v1/greeter
 ```
 
-### 第四步：创建 buf.yaml
-我们通过 buf.yaml 告诉 buf 在那里寻找 proto 文件。我们指定 api/ 文件夹。
+### Step-4: Create buf.yaml
+Tells [Buf](https://docs.buf.build) where to find *.proto files.
 
 ```yaml
 version: v1beta1
@@ -118,13 +117,12 @@ build:
     - api
 ```
 
-### 第五步：创建 buf.gen.yaml
-下面的参数，告诉 buf 编译的时候，应该做哪些事情。我们的文件中，主要做了如下的事情。
-- 指定编译后的文件，放到 api/gen 文件夹中
-- 编译 proto 文件
-- 编译 GRPC 相关的 proto 文件
-- 编译 GRPC-Gateway 相关的 proto 文件
-- 从 proto 文件，编译出 openapi-v2 相关的文件（Swagger）
+### Step-5: Create buf.gen.yaml
+- Tells [Buf](https://docs.buf.build) generate *.go files to api/gen folder
+- Compile proto files related to golang
+- Compile proto files related to grpc-go
+- Compile proto files related to grpc-gateway
+- Compile proto files related to openapiv2 which also compatible with swagger.
 
 ```yaml
 version: v1beta1
@@ -153,15 +151,12 @@ plugins:
       - grpc_api_configuration=api/v1/gw_mapping.yaml
 ```
 
-### 第六步：编译 proto
-上述配置都完成以后，无论 *.proto 文件如何修改，我们只要运行 buf generate，即可编译 *.proto 文件，非常方便。
-
+### Step-6: Compile proto
 ```shell script
 $ buf generate
 ```
 
-> 如下的文件会被创建。
-
+> There will be bellow files generated.
 ```shell script
 $ tree api/gen 
 api/gen
@@ -174,15 +169,16 @@ api/gen
 1 directory, 4 files
 ```
 
-### 第七步：在 main.go 中引用
-我们已经编译好了 *.proto 文件，剩下的就是在 main.go 文件中引用了刚刚生成的 proto API 了。
+### Step-7: Use compiled file in main.go
+*.go files already been compiled, the next step is to create a microservice with them.
 
-这里，我们介绍 [rk-boot](https://github.com/rookie-ninja/rk-boot) 库，通过 [rk-boot](https://github.com/rookie-ninja/rk-boot) 用户可以快速搭建基于 GRPC 的微服务。
-- [文档](https://rkdev.info/cn/docs/bootstrapper/getting-started/grpc-golang/)
-- [源代码](https://github.com/rookie-ninja/rk-boot)
-- [例子](https://github.com/rookie-ninja/rk-demo/tree/master/grpc/getting-started)
+We introduce [rk-boot](https://github.com/rookie-ninja/rk-boot) which is a library can be used to create golang microservice with grpc in a convenient way.
+- [Docs](https://rkdev.info/docs/bootstrapper/getting-started/grpc-golang/)
+- [Source code](https://github.com/rookie-ninja/rk-boot)
+- [Example](https://github.com/rookie-ninja/rk-demo/tree/master/grpc/getting-started)
 
-#### 创建 boot.yaml
+#### Create boot.yaml
+
 ```yaml
 ---
 grpc:
@@ -194,7 +190,7 @@ grpc:
       jsonPath: "api/gen/v1"      # Boot will look for swagger config files from this folder
 ```
 
-#### 创建 main.go
+#### Create main.go
 ```go
 package main
 
@@ -244,7 +240,7 @@ func (server *GreeterServer) Greeter(ctx context.Context, request *greeter.Greet
 }
 ```
 
-#### 文件夹结构
+#### Full structure
 ```shell script
 $ tree
 .
@@ -268,7 +264,7 @@ $ tree
 4 directories, 12 files
 ```
 
-#### 验证
+#### Validate
 ```shell script
 $ go run main.go
 ```
@@ -277,3 +273,5 @@ $ go run main.go
 $ curl "localhost:8080/api/v1/greeter?name=rk-dev"
 {"message":"Hello rk-dev!"}
 ```
+
+Access swagger at localhost:8080/sw

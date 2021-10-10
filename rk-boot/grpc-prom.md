@@ -8,6 +8,10 @@ gRPC 函数的自动监控，将会在后续的文章中介绍，这里我们只
 - 我们将会使用 [rk-boot](https://github.com/rookie-ninja/rk-boot) 来启动 gRPC 服务。
 - 我们将会使用 [rk-prom](https://github.com/rookie-ninja/rk-prom) 来启动 prometheus 客户端。
 
+> 请访问如下地址获取完整教程：
+> - https://rkdev.info/cn
+> - https://rkdocs.netlify.app/cn (备用)
+
 ## 安装
 ```go
 go get github.com/rookie-ninja/rk-boot

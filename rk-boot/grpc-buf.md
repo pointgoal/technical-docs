@@ -15,6 +15,10 @@
 
 除了安装上述命令行，我们还需要根据需要，运行至少4种不同命令来编译 *.proto 文件，非常晦涩难懂。
 
+> 请访问如下地址获取完整教程：
+> - https://rkdev.info/cn
+> - https://rkdocs.netlify.app/cn (备用)
+
 ## 使用 [Buf](https://docs.buf.build) 快速编译
 我们可以通过 [Buf](https://docs.buf.build) 快速配置编译流程。虽然前期需要一定的配置，但是比起写复杂的脚本，要简单安全的多。
 

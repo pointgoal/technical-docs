@@ -8,6 +8,10 @@
 - 为了能让 gRPC 提供 REST API，我们需要使用 [grpc-gateway](https://github.com/grpc-ecosystem/grpc-gateway)
 - 我们需要使用 [protoc-gen-openapiv2](https://github.com/grpc-ecosystem/grpc-gateway) 从 proto 文件，创建 Swagger UI 所需要的文件
 
+> 请访问如下地址获取完整教程：
+> - https://rkdev.info/cn
+> - https://rkdocs.netlify.app/cn (备用)
+
 ### 先决条件
 使用过 GRPC 的用户都应该知道，protocol buffer 文件需要使用相关的命令行，把 *.proto 文件编译成 *.go 文件。
 

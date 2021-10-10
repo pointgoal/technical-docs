@@ -9,6 +9,11 @@ We introduce [rk-boot](https://github.com/rookie-ninja/rk-boot) which is a libra
 - [Source code](https://github.com/rookie-ninja/rk-boot)
 - [Example](https://github.com/rookie-ninja/rk-demo/tree/master/grpc/getting-started)
 
+## Install rk-boot
+```go
+go get github.com/rookie-ninja/rk-boot
+```
+
 ## Quick start
 Please visit rkdev.info for detailed document.
 

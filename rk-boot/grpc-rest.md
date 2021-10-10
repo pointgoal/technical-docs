@@ -5,6 +5,10 @@
 
 - 为了能让 gRPC 提供 REST API，我们需要使用 [grpc-gateway](https://github.com/grpc-ecosystem/grpc-gateway)
 
+> 请访问如下地址获取完整教程：
+> - https://rkdev.info/cn
+> - https://rkdocs.netlify.app/cn (备用)
+
 ## 使用 rk-boot
 [rk-boot](https://github.com/rookie-ninja/rk-boot) 是集成了 Gin, gRPC 和一系列流行 Go 语言框架的启动器，用户可以通过 rk-boot 快速启动企业级 Go 语言微服务。
 

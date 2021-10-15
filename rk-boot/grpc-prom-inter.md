@@ -24,9 +24,11 @@ go get github.com/rookie-ninja/rk-boot
  
 - [rk-prom](https://github.com/rookie-ninja/rk-prom) 作为普罗米修斯(Prometheus)客户端启动库。
 
-> 注意！为了例子能够顺滑进行，请务必创建在 rk-demo 文件夹中。
+> 注意！为了例子能够顺滑进行，请务必在 go.mod 文件里，module 的后缀设置成 rk-demo。
+> 
+> 例如：module github.com/your-repo/rk-demo
 
-### 1.创建 rk-demo/boot.yaml
+### 1.创建 boot.yaml
 为了验证，我们启动了如下几个选项：
 - **commonService**：commonService 里包含了一系列通用 API。[详情](https://github.com/rookie-ninja/rk-grpc#common-service-1)
 - **prom**：Prometheus(普罗米修斯)客户端。
@@ -48,7 +50,7 @@ grpc:
         enabled: true               # Enable prometheus interceptor
 ```
 
-### 2.创建 rk-demo/main.go 
+### 2.创建 main.go 
 ```
 package main
 
@@ -111,7 +113,7 @@ $ curl -X GET localhost:8080/rk/v1/healthy
 ![image](img/prom-inter-flow.png)
 
 ### 快速开始
-#### 1. 创建 rk-demo/prometheus.yml
+#### 1. 创建 prometheus.yml
 > 我们先创建 prometheus.yml 配置文件，让 prometheus 服务能够从 localhost:8080/metrics 拉取数据。
 >
 > 下面的配置中，我们没有指定 /metrics，因为 prometheus默认会使用 /metrics 来拉取数据。
@@ -190,9 +192,9 @@ Grafana 只是一个 Web UI 工具，为了能看到数据报表，我们告诉 
 
 > 注意，这里导入的 Dashboard 只匹配【按照上述逻辑创建的服务】，即，必须创建在 rk-demo 文件夹中。
 >
-> Why? 因为 rk-boot 默认会使用 <文件夹名称>_<Entry 名字>_xxx 作为 prometheus 的 metrics 名字。
+> Why? 因为 rk-boot 默认会使用 <App 名字>_<Entry 名字>_xxx 作为 prometheus 的 metrics 名字。
 >
-> 如果用户使用了不同的文件夹，或者不同的 Entry 名字，则需要改变 Dashboard 里的 Variable。我们会在后续的文章中，介绍如何使用 Grafana。
+> 如果用户使用了不同的 module，或者不同的 Entry 名字，则需要改变 Dashboard 里的 Variable。我们会在后续的文章中，介绍如何使用 Grafana。
 
 > 移动到 Dashboard 导入页面
 

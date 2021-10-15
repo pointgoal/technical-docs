@@ -180,7 +180,7 @@ $ docker run -p 3000:3000 --name grafana grafana/grafana
 Grafana 只是一个 Web UI 工具，为了能看到数据报表，我们告诉 Grafana 在哪里寻找 Prometheus。
 
 > 选择 Prometheus 作为数据源。
->
+
 ![image](img/grafana-add-prom-1.png)
 
 > 填写 Prometheus 地址，跟上面一样的道理，因为 Grafana 运行在 Docker 中，所以，我们不使用 localhost:9090，而是，host.docker.internal:9090。
@@ -190,7 +190,7 @@ Grafana 只是一个 Web UI 工具，为了能看到数据报表，我们告诉 
 #### 6.导入 Dashboard
 我们可以自行编辑 Grafana Dashboard，不过，这个并不是个容易的事儿。针对于使用 rk-boot 启动的服务，我们提供了默认【免费】的 Grafana Dashboard 模版。
 
-> 注意，这里导入的 Dashboard 只匹配【按照上述逻辑创建的服务】，即，必须创建在 rk-demo 文件夹中。
+> 注意，这里导入的 Dashboard 只匹配【按照上述逻辑创建的服务】。
 >
 > Why? 因为 rk-boot 默认会使用 <App 名字>_<Entry 名字>_xxx 作为 prometheus 的 metrics 名字。
 >

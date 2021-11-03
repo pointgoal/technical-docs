@@ -244,7 +244,7 @@ func (server *GreeterServer) Greeter(ctx context.Context, request *greeter.Greet
 2021-07-09T23:50:39.318+0800    INFO    basic/main.go:36        Received request        {"requestId": "c33698f2-3071-48d4-9d92-b1aa311e6c06"}
 ```
 
-## 6.修改 Event
+## 修改 Event
 日志拦截器会为每一个 RPC 请求创建一个 Event 实例。
 
 用户可以添加 pairs，counters，errors。

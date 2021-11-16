@@ -45,32 +45,7 @@ grpc:
             timeoutMs: 1                            # Optional, default: 5000
 ```
 
-### 2.创建 main.go
-
-```go
-// Copyright (c) 2021 rookie-ninja
-//
-// Use of this source code is governed by an Apache-style
-// license that can be found in the LICENSE file.
-package main
-
-import (
-	"context"
-	"github.com/rookie-ninja/rk-boot"
-)
-
-// Application entrance.
-func main() {
-	// Create a new boot instance.
-	boot := rkboot.NewBoot()
-
-	// Bootstrap
-	boot.Bootstrap(context.Background())
-
-	// Wait for shutdown sig
-	boot.WaitForShutdownSig(context.Background())
-}
-```
+c
 
 ### 3.启动 main.go
 ```

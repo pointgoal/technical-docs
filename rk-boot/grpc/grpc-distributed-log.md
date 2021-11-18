@@ -284,7 +284,7 @@ $ go run serverB.go
 ### 10. 往 ServerA 发送请求
 
 ```
-¥ curl "localhost:1949/api/v1/greeter?name=rk-dev"
+$ curl "localhost:1949/api/v1/greeter?name=rk-dev"
 ```
 
 ### 11. 验证日志

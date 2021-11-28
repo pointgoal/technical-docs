@@ -1,7 +1,7 @@
-# GRPC: 如何合理管理日志配置？
+# Echo 框架：日志配置管理
 
 ## 介绍
-本文介绍如何在 gRPC 场景下使用日志。将使用 [rk-boot](https://github.com/rookie-ninja/rk-boot) 来管理日志配置。
+通过一个完整例子，在 Echo 框架中合理管理日志。
 
 > **有什么使用场景？**
 >
@@ -10,10 +10,11 @@
 > - 日志格式修改
 > - 等等
 
-**请访问如下地址获取完整教程：**
+我们将会使用 [rk-boot](https://github.com/rookie-ninja/rk-boot) 来启动 Echo 框架的微服务。
 
-- https://rkdev.info/cn
-- https://rkdocs.netlify.app/cn (备用)
+请访问如下地址获取完整教程：
+
+- https://rkdocs.netlify.app/cn
 
 ## 安装
 ```go
@@ -36,14 +37,14 @@ rk-boot 定义了两种日志类型，会在后面详细介绍，这里先做个
 
 ### 1.创建 boot.yaml
 
-```
+```yaml
 ---
 zapLogger:
-  - name: zap-log                      # Required
+  - name: zap-log                        # Required
     zap:
-      encoding: json
-      outputPaths: ["logs/zap.log"]
-grpc:
+      encoding: json                     # Optional, options: console, json
+      outputPaths: ["logs/zap.log"]      # Optional
+echo:
   - name: greeter
     port: 8080
     enabled: true
@@ -52,7 +53,7 @@ grpc:
 ### 2.创建 main.go
 往 zap-log 日志实例中写个日志。
 
-```
+```go
 package main
 
 import (
@@ -76,13 +77,8 @@ func main() {
 }
 ```
 
-### 3.启动 main.go
-```
-$ go run main.go
-```
-
 ### 4.验证
-文件夹结构以及日志内容。
+文件夹结构
 
 ```
 ├── boot.yaml
@@ -93,7 +89,8 @@ $ go run main.go
 └── main.go
 ```
 
-```
+日志输出
+```json
 {"level":"INFO","ts":"2021-10-21T02:10:09.279+0800","msg":"This is zap-log"}
 ```
 
@@ -101,13 +98,13 @@ $ go run main.go
 上面的例子中，我们配置了 zap 日志，这回我们修改一下 EventLogger。
 
 ### 1.创建 boot.yaml
-```
+```yaml
 ---
 eventLogger:
-  - name: event-log                 # Required
-    encoding: json
-    outputPaths: ["logs/event.log"]
-grpc:
+  - name: event-log                      # Required
+    encoding: json                       # Optional, options: console, json
+    outputPaths: ["logs/event.log"]      # Optional
+echo:
   - name: greeter
     port: 8080
     enabled: true
@@ -116,7 +113,7 @@ grpc:
 ### 2.创建 main.go
 往 event-log 实例中写入日志。
 
-```
+```go
 package main
 
 import (
@@ -149,7 +146,7 @@ $ go run main.go
 ```
 
 ### 4.验证
-文件夹结构以及日志内容。
+文件夹结构
 
 ```
 ├── boot.yaml
@@ -160,20 +157,57 @@ $ go run main.go
 └── main.go
 ```
 
-```
-{"endTime": "2021-10-21T02:22:58.118+0800", "startTime": "2021-10-21T02:22:58.118+0800", "elapsedNano": 409, "timezone": "CST", "ids": {"eventId":"510a050f-c31e-4f50-8d6e-3b836ba1ef17"}, "app": {"appName":"demo","appVersion":"master-7d51358","entryName":"","entryType":""}, "env": {"arch":"amd64","az":"*","domain":"*","hostname":"lark.local","localIP":"10.8.0.2","os":"darwin","realm":"*","region":"*"}, "payloads": {}, "error": {}, "counters": {}, "pairs": {"key":"value"}, "timing": {}, "remoteAddr": "localhost", "operation": "demo-event", "eventStatus": "Ended", "resCode": "OK"}
+日志内容
+
+```json
+{
+    "endTime":"2021-11-27T01:56:56.001+0800",
+    "startTime":"2021-11-27T01:56:56.001+0800",
+    "elapsedNano":423,
+    "timezone":"CST",
+    "ids":{
+        "eventId":"70b034b8-27af-43ad-97a5-82c99292297d"
+    },
+    "app":{
+        "appName":"echo-demo",
+        "appVersion":"master-f948c90",
+        "entryName":"",
+        "entryType":""
+    },
+    "env":{
+        "arch":"amd64",
+        "az":"*",
+        "domain":"*",
+        "hostname":"lark.local",
+        "localIP":"10.8.0.2",
+        "os":"darwin",
+        "realm":"*",
+        "region":"*"
+    },
+    "payloads":{},
+    "error":{},
+    "counters":{},
+    "pairs":{
+        "key":"value"
+    },
+    "timing":{},
+    "remoteAddr":"localhost",
+    "operation":"demo-event",
+    "eventStatus":"Ended",
+    "resCode":"OK"
+}
 ```
 
 ## 概念
 上面的例子中，我们尝试了 ZapLogger 和 EventLogger。接下来我们看看 rk-boot 是如何实现的，并且怎么使用。
 
-### 架构
-![image](img/grpc-logger-arch.png)
+## 架构
+![image](img/echo-logger-arch.png)
 
-### ZapLoggerEntry
+## ZapLoggerEntry
 ZapLoggerEntry 是 zap 实例的一个封装。
 
-```
+```go
 // ZapLoggerEntry contains bellow fields.
 // 1: EntryName: Name of entry.
 // 2: EntryType: Type of entry which is ZapLoggerEntryType.
@@ -196,7 +230,8 @@ ZapLoggerEntry 完全兼容 [zap](https://pkg.go.dev/go.uber.org/zap#section-doc
 用户可以根据需求，配置多个 ZapLogger 实例，并且通过 name 来访问。
 
 **完整配置:**
-```
+
+```yaml
 ---
 zapLogger:
   - name: zap-logger                      # Required
@@ -241,7 +276,7 @@ zapLogger:
 ### 如何在代码里获取 ZapLogger?
 通过 name 来访问。
 
-```
+```go
 // Access entry
 rkentry.GlobalAppCtx.GetZapLoggerEntry("zap-logger")
 
@@ -255,10 +290,10 @@ rkentry.GlobalAppCtx.GetZapLoggerEntry("zap-logger").GetLoggerConfig()
 rkentry.GlobalAppCtx.GetZapLoggerEntry("zap-logger").GetLumberjackConfig()
 ```
 
-### EventLoggerEntry
+## EventLoggerEntry
 rk-boot 把每一个 RPC 请求看作一个 Event，并且使用 [rk-query](https://github.com/rookie-ninja/rk-query) 中的 Event 类型来记录日志。
 
-```
+```go
 // EventLoggerEntry contains bellow fields.
 // 1: EntryName: Name of entry.
 // 2: EntryType: Type of entry which is EventLoggerEntryType.
@@ -300,28 +335,28 @@ type EventLoggerEntry struct {
 | resCode | RPC 返回码。 |
 | eventStatus | Ended 或者 InProgress |
 
-> 例子
-> 
-> ```
-> ------------------------------------------------------------------------
-> endTime=2021-07-10T03:00:12.153392+08:00
-> startTime=2021-07-10T03:00:12.153261+08:00
-> elapsedNano=130727
-> timezone=CST
-> ids={"eventId":"c9a1f6b0-b9ec-4e46-9ed4-238c3c6759ab","requestId":"c9a1f6b0-b9ec-4e46-9ed4-238c3c6759ab","traceId":"5441ff5c3855f03b573e95d81139123b"}
-> app={"appName":"rk-demo","appVersion":"master-f414049","entryName":"greeter","entryType":"GrpcEntry"}
-> env={"arch":"amd64","az":"*","domain":"*","hostname":"lark.local","localIP":"10.8.0.2","os":"darwin","realm":"*","region":"*"}
-> payloads={"grpcMethod":"Greeter","grpcService":"api.v1.Greeter","grpcType":"unaryServer","gwMethod":"GET","gwPath":"/v1/greeter","gwScheme":"http","gwUserAgent":"curl/7.64.1"}
-> error={}
-> counters={}
-> pairs={}
-> timing={}
-> remoteAddr=localhost:59631
-> operation=/api.v1.Greeter/Greeter
-> resCode=OK
-> eventStatus=Ended
-> EOE
-> ```
+例子
+
+```
+------------------------------------------------------------------------
+endTime=2021-11-27T02:30:27.670807+08:00
+startTime=2021-11-27T02:30:27.670745+08:00
+elapsedNano=62536
+timezone=CST
+ids={"eventId":"4bd9e16b-2b29-4773-8908-66c860bf6754"}
+app={"appName":"echo-demo","appVersion":"master-f948c90","entryName":"greeter","entryType":"EchoEntry"}
+env={"arch":"amd64","az":"*","domain":"*","hostname":"lark.local","localIP":"10.8.0.6","os":"darwin","realm":"*","region":"*"}
+payloads={"apiMethod":"GET","apiPath":"/rk/v1/healthy","apiProtocol":"HTTP/1.1","apiQuery":"","userAgent":"curl/7.64.1"}
+error={}
+counters={}
+pairs={}
+timing={}
+remoteAddr=localhost:61726
+operation=/rk/v1/healthy
+resCode=200
+eventStatus=Ended
+EOE
+```
 
 ### 如何在 boot.yaml 里配置 EventLoggerEntry?
 EventLoggerEntry 将会把 Application 名字注入到 Event 中。启动器会从 go.mod 文件中提取 Application 名字。 如果没有 go.mod 文件，启动器会使用默认的名字。
@@ -329,7 +364,7 @@ EventLoggerEntry 将会把 Application 名字注入到 Event 中。启动器会�
 用户可以根据需求，配置多个 EventLogger 实例，并且通过 name 来访问。
 
 **完整配置:**
-```
+```yaml
 ---
 eventLogger:
   - name: event-logger                 # Required
@@ -348,7 +383,7 @@ eventLogger:
 ### 如何在代码里获取 EventLogger？
 通过 name 来访问。
 
-```
+```go
 // Access entry
 rkentry.GlobalAppCtx.GetEventLoggerEntry("event-logger")
 
@@ -366,7 +401,8 @@ rkentry.GlobalAppCtx.GetEventLoggerEntry("event-logger").GetLumberjackConfig()
 Event 是一个 interface，包含了若干方法，请参考：[Event](https://github.com/rookie-ninja/rk-query/blob/master/event.go)
 
 常用方法：
-```
+
+```go
 // Get EventHelper to create Event instance
 helper := rkentry.GlobalAppCtx.GetEventLoggerEntry("event-log").GetEventHelper()
 

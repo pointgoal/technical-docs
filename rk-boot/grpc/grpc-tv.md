@@ -27,13 +27,13 @@
 
 - https://rkdocs.netlify.app/cn
 
-## 安装
+_## 安装
 ```go
 go get github.com/rookie-ninja/rk-boot
 ```
 
 ## 快速开始
-为了完整展示，我们使用一个 git 工程，并且添加 API。
+为了完整展示，我们使用一个 git 工程，并且添加 API。_
 
 ### 1.创建 protobuf 相关文件
 我们使用 buf 命令行来编译 protobuf，需要创建如下几个文件。
